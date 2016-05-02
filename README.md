@@ -1,5 +1,5 @@
 # Pyshake
-Flask/SQLAlchemy/Jinga based web UI for the wpa key cracker "Pyrit"
+Web UI for the famous wpa key cracker "Pyrit"
 
 Install (only tested on debian 8 now):
  1 - Install pyrit on your system
