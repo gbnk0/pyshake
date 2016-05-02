@@ -1,5 +1,6 @@
+#draft
 from models import db, jobs
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect
 import subprocess
 import glob
 import os
@@ -12,7 +13,7 @@ capdir = 'data/cap/*'
 
 app.config['UPLOADED_FILES_DEST'] = 'data/cap/'
 
-s = db.session()
+
 
 class dictobj():
 	def __init__(self):
@@ -101,7 +102,7 @@ def get_capfiles():
 
 
 def get_jobs():
-	joblist = s.query(jobs).all()
+	joblist = db.session.query(jobs).all()
 	return joblist
 
 def get_percent(current, total):
@@ -113,23 +114,18 @@ def divide_millions(number):
 	return str(number) + 'M'
 
 
-def update_job(job_type, msg, percent):
-	jobi = s.query(jobs).filter_by(jobtype=job_type).first()
-	if not jobi:
-		j = jobs(jobname = 'Batch Processing',
-				 jobmsg = msg, jobstate = percent,
-				 jobtype=10)
-		s.add(j)
-	else:
-		s.query().\
-		       filter(jobs.jobtype == job_type).\
-		       update({"jobmsg": (msg)})
-		s.query().\
-		       filter(jobs.jobtype == job_type).\
-		       update({"jobstate": (percent)})
-	s.commit()
-	return 0
+def jobize(msg, percent, job_type):
+	try:
+		#need a worker!!!
+		# job_exists = jobs.query.filter_by(jobtype='').first()
+		# if not job_exists:
+		j = jobs('', 'Test', msg, percent, job_type)
+		db.session.add(j)
+		db.session.commit()
 
+		# return 0
+	except:
+		raise
 
 def start_processing():
 	try:
@@ -142,23 +138,22 @@ def start_processing():
 		    if 'workunits' in line:
 		    	totalWU = line.split(' ')[1].split('/')[1]
 		    	currentWU = line.split(' ')[1].split('/')[0]
-		    	update_job(10, 'Running...', get_percent(currentWU, totalWU))
+		    	update_job('Running...', get_percent(currentWU, totalWU), 10)
 	except:
 		raise
+
 
 @app.route("/")
 def main():
     return render_template('home.html', dicos=get_dics(), essids=get_essids(), capfiles=get_capfiles(), joblist=get_jobs())
 
 
-# @app.route('/upload', methods=['GET', 'POST'])
-# def upload():
-# 	if request.method == 'POST':
-# 		file = request.files['capfile']
-# 		if file:
-# 			filename = file.filename
-# 			file.save(os.path.join(app.config['UPLOADED_FILES_DEST'], filename))
-# 	return render_template('upload.html')
+@app.route('/create_essid', methods = ['POST'])
+def signup():
+	if request.method == 'POST':
+	    essid_name = request.form['essid-name']
+	    jobize('ESSID ' + str(essid_name) + ' Created.', 100, 3)
+	    return redirect('/')
 
 
 if __name__ == "__main__":
