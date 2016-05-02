@@ -1,38 +1,18 @@
+from models import db, jobs
 from flask import Flask, render_template, request
 import subprocess
 import glob
 import os
-from flask.ext.uploads import UploadSet, configure_uploads, patch_request_class, ALL
-from sqlalchemy import Column, DateTime, String, Integer, ForeignKey, func
-from sqlalchemy.orm import relationship, backref
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from models import db, jobs
+# from flask.ext.uploads import UploadSet, configure_uploads, patch_request_class, ALL
 
-# Base = declarative_base()
 app = Flask(__name__)
 
 pyritpath = '/usr/bin/pyrit'
 capdir = 'data/cap/*'
 
 app.config['UPLOADED_FILES_DEST'] = 'data/cap/'
-# engine = create_engine('sqlite:///db/database.db')
-
-# session = sessionmaker()
-# session.configure(bind=engine)
-# Base.metadata.create_all(engine)
 
 s = db.session()
-
-
-# class jobs(Base):
-# 	__tablename__ = 'jobs'
-# 	jobid = Column(Integer, autoincrement = True, primary_key=True)
-# 	jobname = Column(String)
-# 	jobmsg = Column(String)
-# 	jobstate = Column(Integer)
-# 	jobtype = Column(Integer)
 
 class dictobj():
 	def __init__(self):
