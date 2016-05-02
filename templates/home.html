@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% block content %}
+        <div class="col-lg-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                Jobs
+                </div>
+                    <table class="table table-condensed table-striped table-hover">
+                        <tbody>
+                            {% for job in joblist %}
+                                <tr class="active">
+                                    <td class="icontd"><i class="fa fa-book" aria-hidden="true"></i></td>
+                                    <td>{{job.jobname}}</td>
+                                    <td>{{job.jobmsg}}</td>
+                                    <td style="width: 20%">
+
+                                        <div class="progress">
+                                          <div class="progress-bar progress-bar-warning progress-bar-striped active" role="progressbar" aria-valuenow="{{ job.jobstate }}"
+                                          aria-valuemin="0" aria-valuemax="100" style="width: {{ job.jobstate }}%;">
+                                          </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+            </div>
+        </div>
+
+        <div class="row marketing">
+
+            <div class="col-lg-6">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        Available dictionaries
+                        <div class="btn-group pull-right">
+                            <a href="#" class="btn btn-default btn-xs">Import</a>
+                            <a href="#" class="btn btn-danger btn-xs">Delete</a>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        
+                        {% for dico in dicos %}
+
+                        <div class="notice notice-success notice-sm">
+                            <strong>{{ dico.name }}</strong>
+                        </div>
+
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        ESSIDs
+                        <div class="btn-group pull-right">
+                            <a href="#" class="btn btn-default btn-xs">Start Processing</a>
+                            <a href="#" class="btn btn-success btn-xs">Import .cap</a>
+                        </div>
+                    </div>
+                        <div class="panel-body">
+                            
+                            {% for essid, percent in essids.iteritems() %}
+
+                            <div class="notice notice-warning notice-sm">
+                                <strong>{{ essid }}</strong>
+                                <span class="badge pull-right">{{ percent }}%</span>
+                            </div>
+
+                            {% endfor %}
+                        </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        Cap files
+                        <div class="btn-group pull-right">
+                            <a href="#" class="btn btn-warning btn-xs">Import .cap</a>
+                        </div>
+                    </div>
+                        <div class="panel-body">
+                            
+                            {% for f in capfiles %}
+
+                            <div class="notice notice-warning notice-sm">
+                                <strong>{{ f.name }}</strong>
+                                <span class="badge pull-right">{{ f.essids }}</span>
+                            </div>
+
+                            {% endfor %}
+                        </div>
+                </div>
+            </div>
+{% endblock %}
