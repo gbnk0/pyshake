@@ -15,8 +15,10 @@ class jobs(db.Model):
     jobtype = db.Column(db.Integer)
 
     def __init__(self, jobid, jobname, jobmsg, jobstate, jobtype):
-    	self.id = jobid
-        self.name = jobname
-        self.msg = jobmsg
-        self.state = jobstate
-        self.type = jobtype
+    	#self.jobid = jobid
+        self.jobname = jobname
+        self.jobmsg = jobmsg
+        self.jobstate = jobstate
+        self.jobtype = jobtype
+
+        print "DEBUG : jobname: %s jobmsg: %s jobstate: %d jobtype: %d" % (jobname, jobmsg, jobstate, jobtype) 

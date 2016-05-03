@@ -16,131 +16,125 @@ app.config['UPLOADED_FILES_DEST'] = 'data/cap/'
 
 
 class dictobj():
-	def __init__(self):
-		self.path = ''
-		self.name = ''
+    def __init__(self):
+        self.path = ''
+        self.name = ''
 
 class essidobj():
-	def __init__(self):
-		self.path = ''
-		self.name = ''
-		self.capath = ''
-		self.bssid = ''
+    def __init__(self):
+	self.path = ''
+	self.name = ''
+	self.capath = ''
+	self.bssid = ''
 
 class capfileobj():
-	def __init__(self):
-		self.path = ''
-		self.name = ''
+    def __init__(self):
+    	self.path = ''
+    	self.name = ''
 
 
 def import_dict(dictpath):
-	cmd = [pyritpath, '-i', dictpath, 'import_passwords']
-	p = subprocess.Popen(cmd,		stdout=subprocess.PIPE,
-									stderr=subprocess.PIPE,
-									universal_newlines=True)
-	while p.poll() is None:
-	    line = p.stdout.readline()
-	    if 'read' in line:
-	    	print line.split(' ')[0]
+    cmd = [pyritpath, '-i', dictpath, 'import_passwords']
+    p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
+    while p.poll() is None:
+        line = p.stdout.readline()
+        if 'read' in line:
+            print line.split(' ')[0]
 
 
 def get_dics():
-	dicos = glob.glob("data/dicts/*")
-	diclist = []
-	for dico in dicos:
-		curdict = dictobj()
-		curdict.name = os.path.basename(dico)
-		curdict.path = dico
-		diclist.append(curdict)
-	return diclist
+    dicos = glob.glob("data/dicts/*")
+    diclist = []
+    for dico in dicos:
+    	curdict = dictobj()
+    	curdict.name = os.path.basename(dico)
+    	curdict.path = dico
+    	diclist.append(curdict)
+    return diclist
 
 
 def get_essids():
-	cmd = [pyritpath, 'eval']
-	p = subprocess.Popen(cmd,		stdout=subprocess.PIPE,
-									stderr=subprocess.PIPE,
-									universal_newlines=True)
-
-	results = {}
-	while p.poll() is None:
-	    line = p.stdout.readline()
-	    if 'ESSID' in line:
-	    	essid = line.split("'")[1]
-	    	percent = line.split("(")[1]
-	    	results[essid] = percent.replace("%)\n","")
-
-	return results
+    cmd = [pyritpath, 'eval']
+    p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
+    
+    results = {}
+    while p.poll() is None:
+        line = p.stdout.readline()
+        if 'ESSID' in line:
+            essid = line.split("'")[1]
+            percent = line.split("(")[1]
+            results[essid] = percent.replace("%)\n","")
+    return results
 
 
 def get_handshakes(capfile):
-	cmd = [pyritpath, '-r', capfile.path ,'analyze']
-	p = subprocess.Popen(cmd,		stdout=subprocess.PIPE,
-									stderr=subprocess.PIPE,
-									universal_newlines=True)
+    cmd = [pyritpath, '-r', capfile.path ,'analyze']
+    p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
+    
+    results = {}
+    while p.poll() is None:
+        line = p.stdout.readline()
+        if 'AccessPoint' in line:
+            essid = line.split("'")[1]
+            mac = line.split(" ")[2]
+            results[essid] = percent.replace("%)\n","")
 
-	results = {}
-	while p.poll() is None:
-	    line = p.stdout.readline()
-	    if 'AccessPoint' in line:
-	    	essid = line.split("'")[1]
-	    	mac = line.split(" ")[2]
-	    	results[essid] = percent.replace("%)\n","")
-
-	return results
+    return results
 
 
 def get_capfiles():
-	files = glob.glob(capdir)
-	results = []
-	for file in files:
-		curfile = capfileobj()
-		curfile.name = os.path.basename(file)
-		curfile.path = file
-		results.append(curfile)
-
-	return results
+    files = glob.glob(capdir)
+    results = []
+    for file in files:
+        curfile = capfileobj()
+        curfile.name = os.path.basename(file)
+        curfile.path = file
+        results.append(curfile)
+    
+    return results
 
 
 def get_jobs():
-	joblist = db.session.query(jobs).all()
-	return joblist
+    joblist = db.session.query(jobs).all()
+    return joblist
 
 def get_percent(current, total):
-	result = int(current) * 100 / int(total)
-	return result
+    result = int(current) * 100 / int(total)
+    return result
 
 def divide_millions(number):
-	number = 1.0 * number / 1000000
-	return str(number) + 'M'
+    number = 1.0 * number / 1000000
+    return str(number) + 'M'
 
 
 def jobize(msg, percent, job_type):
-	try:
-		#need a worker!!!
-		# job_exists = jobs.query.filter_by(jobtype='').first()
-		# if not job_exists:
-		j = jobs('', 'Test', msg, percent, job_type)
-		db.session.add(j)
-		db.session.commit()
-
-		# return 0
-	except:
-		raise
+    try:
+        #need a worker!!!
+        # job_exists = jobs.query.filter_by(jobtype='').first()
+        # if not job_exists:
+        j = jobs('', 'Test', msg, percent, job_type)
+        db.session.add(j)
+        db.session.commit()
+        
+        # return 0
+    except:
+        raise
 
 def start_processing():
-	try:
-		cmd = [pyritpath, 'batch']
-		p = subprocess.Popen(cmd,		stdout=subprocess.PIPE,
-										stderr=subprocess.PIPE,
-										universal_newlines=True)
-		while p.poll() is None:
-		    line = p.stdout.readline()
-		    if 'workunits' in line:
-		    	totalWU = line.split(' ')[1].split('/')[1]
-		    	currentWU = line.split(' ')[1].split('/')[0]
-		    	update_job('Running...', get_percent(currentWU, totalWU), 10)
-	except:
-		raise
+    try:
+    	cmd = [pyritpath, 'batch']
+    	p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
+    	while p.poll() is None:
+    	    line = p.stdout.readline()
+    	    if 'workunits' in line:
+                print "*** DEBUG ***"
+    	    	totalWU = line.split(' ')[1].split('/')[1]
+    	    	currentWU = line.split(' ')[1].split('/')[0]
+    	    	jobize('Running...', get_percent(currentWU, totalWU), 10)
+            else :
+    	        jobize('Finished', 100, 10)
+    except:
+    	raise
 
 
 @app.route("/")
@@ -150,11 +144,11 @@ def main():
 
 @app.route('/create_essid', methods = ['POST'])
 def signup():
-	if request.method == 'POST':
-	    essid_name = request.form['essid-name']
-	    jobize('ESSID ' + str(essid_name) + ' Created.', 100, 3)
-	    return redirect('/')
+    if request.method == 'POST':
+        essid_name = request.form['essid-name']
+        jobize('ESSID ' + str(essid_name) + ' Created.', 100, 3)
+        return redirect('/')
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", debug=True)
