@@ -1,19 +1,20 @@
-from models import db, jobs
+from config import app, db
+from models import jobs
 from flask import Flask, render_template, request, redirect
 import subprocess
 import glob
 import os
 from config import pyrit_path, cap_path
 
-app = Flask(__name__)
-app.config['UPLOADED_FILES_DEST'] = cap_path
 
 
 #DICTIONNARY FILE 
 class dictobj():
+
     def __init__(self):
         self.path = ''
         self.name = ''
+
 
 #ESSID (Access point) 
 class essidobj():
@@ -43,9 +44,11 @@ class essidobj():
 
 #CAPTURE FILE (containing the handshake) 
 class capfileobj():
+
     def __init__(self):
     	self.path = ''
     	self.name = ''
+
 
 #DICTIONNARY IMPORTATION FUNCTION
 def import_dict(dictpath):
@@ -68,6 +71,7 @@ def get_dics():
     	diclist.append(curdict)
     return diclist
 
+
 #LIST ALL ESSID CREATED IN PYRIT BY EXECUTING "pyrit eval"
 def get_essids():
     cmd = [pyrit_path, 'eval']
@@ -81,6 +85,7 @@ def get_essids():
             percent = line.split("(")[1]
             results[essid] = percent.replace("%)\n","")
     return results
+
 
 #RETURN ALL HANDSHAKES CONAINED ON THE SPECIFIED CAPTURE FILE
 def get_handshakes(capfile):
@@ -97,6 +102,7 @@ def get_handshakes(capfile):
 
     return results
 
+
 #LIST ALL CAPTURE FILES IN THE CAP FOLDER
 def get_capfiles():
     files = glob.glob(cap_path + '*')
@@ -109,19 +115,23 @@ def get_capfiles():
     
     return results
 
+
 #LIST ALL JOBS IN THE SQLITE DB
 def get_jobs():
     joblist = db.session.query(jobs).all()
     return joblist
+
 
 #RETURN PERCENT VALUE FORM TWO NUMBERS
 def get_percent(current, total):
     result = int(current) * 100 / int(total)
     return result
 
+
 def divide_millions(number):
     number = 1.0 * number / 1000000
     return str(number) + 'M'
+
 
 #CREATE JOBS
 def jobize(msg, percent, job_type):
@@ -136,6 +146,7 @@ def jobize(msg, percent, job_type):
         # return 0
     except:
         raise
+
 
 #PROCESS ALL PASSWORDS IMPORTED WITH ALL ESSID CREATED
 def start_processing():
@@ -170,6 +181,7 @@ def create_essid(essid_name):
 @app.route("/")
 def main():
     return render_template('home.html', dicos=get_dics(), essids=get_essids(), capfiles=get_capfiles(), joblist=get_jobs())
+
 
 #ROUTE FOR CREATING A NEW ESSID
 @app.route('/create_essid', methods = ['POST'])

@@ -1,15 +1,12 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from config import db_path, db_file
+from config import app, db
 
-app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + db_path + db_file
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 
-db = SQLAlchemy(app)
 
 class jobs(db.Model):
+
     jobid = db.Column(db.Integer, autoincrement = True, primary_key=True)
     jobname = db.Column(db.String)
     jobmsg = db.Column(db.String)
@@ -23,4 +20,4 @@ class jobs(db.Model):
         self.jobstate = jobstate
         self.jobtype = jobtype
 
-        print "DEBUG : jobname: %s jobmsg: %s jobstate: %d jobtype: %d" % (jobname, jobmsg, jobstate, jobtype) 
+        #print "DEBUG : jobname: %s jobmsg: %s jobstate: %d jobtype: %d" % (jobname, jobmsg, jobstate, jobtype) 
