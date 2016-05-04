@@ -7,7 +7,7 @@ from config import pyrit_path, cap_path
 
 app = Flask(__name__)
 
-app.config['UPLOADED_FILES_DEST'] = 'data/cap/'
+app.config['UPLOADED_FILES_DEST'] = cap_path
 
 
 #DICTIONNARY FILE 
