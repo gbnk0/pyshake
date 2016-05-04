@@ -3,12 +3,9 @@ from flask import Flask, render_template, request, redirect
 import subprocess
 import glob
 import os
-
+from config import pyrit_path, cap_path
 
 app = Flask(__name__)
-
-pyritpath = '/usr/bin/pyrit'
-capdir = 'data/cap/*'
 
 app.config['UPLOADED_FILES_DEST'] = 'data/cap/'
 
@@ -35,7 +32,7 @@ class capfileobj():
 
 #DICTIONNARY IMPORTATION FUNCTION
 def import_dict(dictpath):
-    cmd = [pyritpath, '-i', dictpath, 'import_passwords']
+    cmd = [pyrit_path, '-i', dictpath, 'import_passwords']
     p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
     while p.poll() is None:
         line = p.stdout.readline()
@@ -56,7 +53,7 @@ def get_dics():
 
 #LIST ALL ESSID CREATED IN PYRIT BY EXECUTING "pyrit eval"
 def get_essids():
-    cmd = [pyritpath, 'eval']
+    cmd = [pyrit_path, 'eval']
     p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
     
     results = {}
@@ -70,7 +67,7 @@ def get_essids():
 
 #RETURN ALL HANDSHAKES CONAINED ON THE SPECIFIED CAPTURE FILE
 def get_handshakes(capfile):
-    cmd = [pyritpath, '-r', capfile.path ,'analyze']
+    cmd = [pyrit_path, '-r', capfile.path ,'analyze']
     p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
     
     results = {}
@@ -85,7 +82,7 @@ def get_handshakes(capfile):
 
 #LIST ALL CAPTURE FILES IN THE CAP FOLDER
 def get_capfiles():
-    files = glob.glob(capdir)
+    files = glob.glob(cap_path + '*')
     results = []
     for file in files:
         curfile = capfileobj()
@@ -126,7 +123,7 @@ def jobize(msg, percent, job_type):
 #PROCESS ALL PASSWORDS IMPORTED WITH ALL ESSID CREATED
 def start_processing():
     try:
-    	cmd = [pyritpath, 'batch']
+    	cmd = [pyrit_path, 'batch']
     	p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
     	while p.poll() is None:
     	    line = p.stdout.readline()
