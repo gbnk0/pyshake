@@ -17,11 +17,29 @@ class dictobj():
 
 #ESSID (Access point) 
 class essidobj():
+
     def __init__(self):
 	self.path = ''
 	self.name = ''
 	self.capath = ''
 	self.bssid = ''
+
+    def start_processing(self):
+        try:
+            cmd = [pyrit_path, '-e', self.name, 'batch']
+            p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
+            while p.poll() is None:
+                line = p.stdout.readline()
+                if 'workunits' in line:
+                    print "*** DEBUG ***"
+                    totalWU = line.split(' ')[1].split('/')[1]
+                    currentWU = line.split(' ')[1].split('/')[0]
+                    jobize('Running...', get_percent(currentWU, totalWU), 10)
+                else :
+                    jobize('Finished', 100, 10)
+        except:
+            raise
+
 
 #CAPTURE FILE (containing the handshake) 
 class capfileobj():
