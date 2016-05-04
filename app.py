@@ -28,7 +28,9 @@ class essidobj():
     def start_processing(self):
         try:
             cmd = [pyrit_path, '-e', self.name, 'batch']
-            p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
+            p = subprocess.Popen(cmd, stdout=subprocess.PIPE,
+                                      stderr=subprocess.PIPE,
+                                      universal_newlines=True)
             while p.poll() is None:
                 line = p.stdout.readline()
                 if 'workunits' in line:
@@ -53,7 +55,9 @@ class capfileobj():
 #DICTIONNARY IMPORTATION FUNCTION
 def import_dict(dictpath):
     cmd = [pyrit_path, '-i', dictpath, 'import_passwords']
-    p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
+    p = subprocess.Popen(cmd, stdout=subprocess.PIPE,
+                              stderr=subprocess.PIPE,
+                              universal_newlines=True)
     while p.poll() is None:
         line = p.stdout.readline()
         if 'read' in line:
@@ -75,7 +79,9 @@ def get_dics():
 #LIST ALL ESSID CREATED IN PYRIT BY EXECUTING "pyrit eval"
 def get_essids():
     cmd = [pyrit_path, 'eval']
-    p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
+    p = subprocess.Popen(cmd, stdout=subprocess.PIPE,
+                              stderr=subprocess.PIPE,
+                              universal_newlines=True)
     
     results = {}
     while p.poll() is None:
@@ -90,7 +96,9 @@ def get_essids():
 #RETURN ALL HANDSHAKES CONAINED ON THE SPECIFIED CAPTURE FILE
 def get_handshakes(capfile):
     cmd = [pyrit_path, '-r', capfile.path ,'analyze']
-    p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
+    p = subprocess.Popen(cmd, stdout=subprocess.PIPE,
+                              stderr=subprocess.PIPE,
+                              universal_newlines=True)
     
     results = {}
     while p.poll() is None:
@@ -152,7 +160,9 @@ def jobize(msg, percent, job_type):
 def start_processing():
     try:
     	cmd = [pyrit_path, 'batch']
-    	p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
+    	p = subprocess.Popen(cmd, stdout=subprocess.PIPE,
+                                  stderr=subprocess.PIPE,
+                                  universal_newlines=True)
     	while p.poll() is None:
     	    line = p.stdout.readline()
     	    if 'workunits' in line:
@@ -169,7 +179,9 @@ def start_processing():
 #CREATE ESSID FUNCTION
 def create_essid(essid_name):
     cmd = [pyrit_path, '-e', essid_name, 'create_essid']
-    p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
+    p = subprocess.Popen(cmd, stdout=subprocess.PIPE,
+                              stderr=subprocess.PIPE,
+                              universal_newlines=True)
     while p.poll() is None:
         line = p.stdout.readline()
         if 'Created' in line:
@@ -180,7 +192,10 @@ def create_essid(essid_name):
 #ROUTE FOR HOME
 @app.route("/")
 def main():
-    return render_template('home.html', dicos=get_dics(), essids=get_essids(), capfiles=get_capfiles(), joblist=get_jobs())
+    return render_template('home.html', dicos=get_dics(),
+                                        essids=get_essids(),
+                                        capfiles=get_capfiles(),
+                                        joblist=get_jobs())
 
 
 #ROUTE FOR CREATING A NEW ESSID
