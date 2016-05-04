@@ -13,7 +13,7 @@
                         <tbody>
                             {% for job in joblist %}
                                 <tr class="active">
-                                    <td class="icontd"><i class="fa fa-book" aria-hidden="true"></i></td>
+                                    <td class="icontd">{% if job.jobtype == 3 %}<i class="fa fa-wifi" aria-hidden="true"></i>{% endif %}</i></td>
                                     <td>{{job.jobname}}</td>
                                     <td>{{job.jobmsg}}</td>
                                     <td style="width: 20%">
@@ -25,6 +25,7 @@
                                           {% elif job.jobstate <= 100 %}
 
                                           <div class="progress-bar progress-bar-warning progressbar-stripped active" role="progressbar" aria-valuenow="{{ job.jobstate }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ job.jobstate }}%;">
+
                                           {% endif %}
                                           <span>{{ job.jobstate }}% Complete</span>
                                           </div>
