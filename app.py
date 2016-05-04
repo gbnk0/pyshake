@@ -1,10 +1,9 @@
-#draft
 from models import db, jobs
 from flask import Flask, render_template, request, redirect
 import subprocess
 import glob
 import os
-# from flask.ext.uploads import UploadSet, configure_uploads, patch_request_class, ALL
+
 
 app = Flask(__name__)
 
@@ -14,12 +13,13 @@ capdir = 'data/cap/*'
 app.config['UPLOADED_FILES_DEST'] = 'data/cap/'
 
 
-
+#DICTIONNARY FILE 
 class dictobj():
     def __init__(self):
         self.path = ''
         self.name = ''
 
+#ESSID (Access point) 
 class essidobj():
     def __init__(self):
 	self.path = ''
@@ -27,12 +27,13 @@ class essidobj():
 	self.capath = ''
 	self.bssid = ''
 
+#CAPTURE FILE (containing the handshake) 
 class capfileobj():
     def __init__(self):
     	self.path = ''
     	self.name = ''
 
-
+#DICTIONNARY IMPORTATION FUNCTION
 def import_dict(dictpath):
     cmd = [pyritpath, '-i', dictpath, 'import_passwords']
     p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
@@ -42,6 +43,7 @@ def import_dict(dictpath):
             print line.split(' ')[0]
 
 
+#LIST ALL DICTIONNARY FILES IN DATA/DICTS/ AND RETURN A LIST
 def get_dics():
     dicos = glob.glob("data/dicts/*")
     diclist = []
@@ -52,7 +54,7 @@ def get_dics():
     	diclist.append(curdict)
     return diclist
 
-
+#LIST ALL ESSID CREATED IN PYRIT BY EXECUTING "pyrit eval"
 def get_essids():
     cmd = [pyritpath, 'eval']
     p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
@@ -66,7 +68,7 @@ def get_essids():
             results[essid] = percent.replace("%)\n","")
     return results
 
-
+#RETURN ALL HANDSHAKES CONAINED ON THE SPECIFIED CAPTURE FILE
 def get_handshakes(capfile):
     cmd = [pyritpath, '-r', capfile.path ,'analyze']
     p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
@@ -81,7 +83,7 @@ def get_handshakes(capfile):
 
     return results
 
-
+#LIST ALL CAPTURE FILES IN THE CAP FOLDER
 def get_capfiles():
     files = glob.glob(capdir)
     results = []
@@ -93,11 +95,12 @@ def get_capfiles():
     
     return results
 
-
+#LIST ALL JOBS IN THE SQLITE DB
 def get_jobs():
     joblist = db.session.query(jobs).all()
     return joblist
 
+#RETURN PERCENT VALUE FORM TWO NUMBERS
 def get_percent(current, total):
     result = int(current) * 100 / int(total)
     return result
@@ -106,7 +109,7 @@ def divide_millions(number):
     number = 1.0 * number / 1000000
     return str(number) + 'M'
 
-
+#CREATE JOBS
 def jobize(msg, percent, job_type):
     try:
         #need a worker!!!
@@ -120,6 +123,7 @@ def jobize(msg, percent, job_type):
     except:
         raise
 
+#PROCESS ALL PASSWORDS IMPORTED WITH ALL ESSID CREATED
 def start_processing():
     try:
     	cmd = [pyritpath, 'batch']
@@ -136,12 +140,12 @@ def start_processing():
     except:
     	raise
 
-
+#ROUTE FOR HOME
 @app.route("/")
 def main():
     return render_template('home.html', dicos=get_dics(), essids=get_essids(), capfiles=get_capfiles(), joblist=get_jobs())
 
-
+#ROUTE FOR CREATING A NEW ESSID
 @app.route('/create_essid', methods = ['POST'])
 def signup():
     if request.method == 'POST':
