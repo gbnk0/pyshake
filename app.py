@@ -6,7 +6,6 @@ import os
 from config import pyrit_path, cap_path
 
 app = Flask(__name__)
-
 app.config['UPLOADED_FILES_DEST'] = cap_path
 
 
@@ -145,6 +144,7 @@ def create_essid(essid_name):
     while p.poll() is None:
         line = p.stdout.readline()
         if 'Created' in line:
+            jobize('ESSID ' + str(essid_name) + ' Created.', 100, 3)
             return True
 
 
@@ -159,7 +159,6 @@ def signup():
     if request.method == 'POST':
         essid_name = request.form['essid-name']
         if create_essid(essid_name):
-            jobize('ESSID ' + str(essid_name) + ' Created.', 100, 3)
             return redirect('/')
 
 
