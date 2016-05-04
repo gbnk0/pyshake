@@ -1,3 +1,5 @@
+*.swp
+*.swo
 *.db
 *.pyc
 *.ignore
