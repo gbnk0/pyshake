@@ -19,8 +19,14 @@
                                     <td style="width: 20%">
 
                                         <div class="progress">
-                                          <div class="progress-bar progress-bar-warning progress-bar-striped active" role="progressbar" aria-valuenow="{{ job.jobstate }}"
-                                          aria-valuemin="0" aria-valuemax="100" style="width: {{ job.jobstate }}%;">
+                                          {% if job.jobstate == 100 %}
+
+                                          <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{ job.jobstate }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ job.jobstate }}%;">
+                                          {% elif job.jobstate <= 100 %}
+
+                                          <div class="progress-bar progress-bar-warning progressbar-stripped active" role="progressbar" aria-valuenow="{{ job.jobstate }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ job.jobstate }}%;">
+                                          {% endif %}
+                                          <span>{{ job.jobstate }}% Complete</span>
                                           </div>
                                         </div>
                                     </td>
