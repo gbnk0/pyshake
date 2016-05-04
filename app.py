@@ -137,6 +137,17 @@ def start_processing():
     except:
     	raise
 
+
+#CREATE ESSID FUNCTION
+def create_essid(essid_name):
+    cmd = [pyrit_path, '-e', essid_name, 'create_essid']
+    p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
+    while p.poll() is None:
+        line = p.stdout.readline()
+        if 'Created' in line:
+            return True
+
+
 #ROUTE FOR HOME
 @app.route("/")
 def main():
@@ -147,8 +158,9 @@ def main():
 def signup():
     if request.method == 'POST':
         essid_name = request.form['essid-name']
-        jobize('ESSID ' + str(essid_name) + ' Created.', 100, 3)
-        return redirect('/')
+        if create_essid(essid_name):
+            jobize('ESSID ' + str(essid_name) + ' Created.', 100, 3)
+            return redirect('/')
 
 
 if __name__ == "__main__":
