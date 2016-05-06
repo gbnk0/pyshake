@@ -1,4 +1,4 @@
-from config import app, db
+from config import app, db, s
 from models import jobs
 from flask import Flask, render_template, request, redirect
 import subprocess
@@ -127,7 +127,7 @@ def get_capfiles():
 
 #LIST ALL JOBS IN THE SQLITE DB
 def get_jobs():
-    joblist = db.session.query(jobs).all()
+    joblist = s.query(jobs).filter(jobs.jobarchived == 0).all()
     return joblist
 
 
@@ -142,14 +142,14 @@ def divide_millions(number):
     return str(number) + 'M'
 
 
-#CREATE JOBS
+#CREATE JOBS 
 def jobize(msg, percent, job_type):
     try:
         # job_exists = jobs.query.filter_by(jobtype='').first()
         # if not job_exists:
-        j = jobs('Test', msg, percent, job_type, 0)
-        db.session.add(j)
-        db.session.commit()
+        j = jobs('', 'Test', msg, percent, job_type, 0)
+        s.add(j)
+        s.commit()
         
         return 0
     except:
@@ -203,17 +203,23 @@ def main():
 @app.route('/create_essid', methods = ['POST'])
 def create_essid():
     if request.method == 'POST':
-        essid_name = request.form['essid-name']
-        if create_essid(essid_name):
-            return redirect('/')
-
+        try:
+            essid_name = request.form['essid-name']
+            if create_essid(essid_name):
+                return redirect('/')
+        except:
+            raise
 
 #ROUTE FOR ARCHIVING JOB
-# @app.route('/archive_job/<job_id>', methods = ['GET'])
-# def archive_job(job_id):
-#     if request.method == 'GET':
-#         if archive_job(job_id):
-#             return redirect('/')
+@app.route('/archive_job/<job_id>', methods = ['GET'])
+def archive_job(job_id):
+    if request.method == 'GET':
+        try:
+            s.query(jobs).filter(jobs.jobid == job_id).filter(jobs.jobstate == 100).update({'jobarchived': 1})
+            s.commit()
+        except:
+            raise
+        return redirect('/')
 
 
 if __name__ == "__main__":

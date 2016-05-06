@@ -26,17 +26,17 @@
                                             <div class="progress">
                                               {% if job.jobstate == 100 %}
 
-                                              <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{ job.jobstate }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ job.jobstate }}%;">
+                                                <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{ job.jobstate }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ job.jobstate }}%;">
                                               {% elif job.jobstate <= 100 %}
 
-                                              <div class="progress-bar progress-bar-warning progressbar-stripped active" role="progressbar" aria-valuenow="{{ job.jobstate }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ job.jobstate }}%;">
+                                                <div class="progress-bar progress-bar-warning progressbar-stripped active" role="progressbar" aria-valuenow="{{ job.jobstate }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ job.jobstate }}%;">
 
                                               {% endif %}
-                                              <span>{{ job.jobstate }}% Complete</span>
+                                                <span>{{ job.jobstate }}% Complete</span>
                                               </div>
                                             </div>
                                         </td>
-                                        <td style = "width: 32px;"><a href=""><i class="fa fa-archive" aria-hidden="true"></i></a></td>
+                                        <td style = "width: 32px;"><a href="/archive_job/{{ job.jobid}}"><i class="fa fa-archive" aria-hidden="true"></i></a></td>
                                     </tr>
                                 {% endfor %}
                             </tbody>

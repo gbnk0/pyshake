@@ -19,3 +19,5 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 app.config['UPLOADED_FILES_DEST'] = cap_path
 
 db = SQLAlchemy(app)
+
+s = db.session
