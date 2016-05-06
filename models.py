@@ -12,12 +12,13 @@ class jobs(db.Model):
     jobmsg = db.Column(db.String)
     jobstate = db.Column(db.Integer)
     jobtype = db.Column(db.Integer)
+    jobarchived = db.Column(db.Integer)
 
-    def __init__(self, jobid, jobname, jobmsg, jobstate, jobtype):
-    	#self.jobid = jobid
+    def __init__(self, jobname, jobmsg, jobstate, jobtype, jobarchived):
+
         self.jobname = jobname
         self.jobmsg = jobmsg
         self.jobstate = jobstate
         self.jobtype = jobtype
-
-        #print "DEBUG : jobname: %s jobmsg: %s jobstate: %d jobtype: %d" % (jobname, jobmsg, jobstate, jobtype) 
+        self.jobtype = jobtype
+        self.jobarchived = jobarchived

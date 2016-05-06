@@ -52,6 +52,7 @@ class capfileobj():
     	self.name = ''
 
 
+
 #DICTIONNARY IMPORTATION FUNCTION
 def import_dict(dictpath):
     cmd = [pyrit_path, '-i', dictpath, 'import_passwords']
@@ -144,14 +145,13 @@ def divide_millions(number):
 #CREATE JOBS
 def jobize(msg, percent, job_type):
     try:
-        #need a worker!!!
         # job_exists = jobs.query.filter_by(jobtype='').first()
         # if not job_exists:
-        j = jobs('', 'Test', msg, percent, job_type)
+        j = jobs('Test', msg, percent, job_type, 0)
         db.session.add(j)
         db.session.commit()
         
-        # return 0
+        return 0
     except:
         raise
 
