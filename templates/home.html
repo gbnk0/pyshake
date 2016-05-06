@@ -59,8 +59,11 @@
                             <div class="notice notice-warning notice-sm">
 
                                 <strong>{{ essid }}</strong>
-                                <span class="badge pull-right">{{ percent }}%</span>
-
+                                {% if percent|int == 100.00 %}
+                                    <a href="#" class="btn btn-success btn-xs pull-right">Crack</a>
+                                {% else %}
+                                    <span class="badge pull-right">{{ percent }}%</span>
+                                {% endif %}
                             </div>
 
                             {% endfor %}
@@ -114,5 +117,5 @@
             </div>
 
 
-{% include "addESSID.html" ignore missing %}
+{% include "add_essid.html" ignore missing %}
 {% endblock %}

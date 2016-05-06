@@ -20,28 +20,32 @@ class dictobj():
 class essidobj():
 
     def __init__(self):
-	self.path = ''
-	self.name = ''
-	self.capath = ''
-	self.bssid = ''
+    	self.path = ''
+    	self.name = ''
+    	self.capath = ''
+    	self.bssid = ''
+        self.isprocessing = False
 
-    def start_processing(self):
-        try:
-            cmd = [pyrit_path, '-e', self.name, 'batch']
-            p = subprocess.Popen(cmd, stdout=subprocess.PIPE,
-                                      stderr=subprocess.PIPE,
-                                      universal_newlines=True)
-            while p.poll() is None:
-                line = p.stdout.readline()
-                if 'workunits' in line:
-                    print "*** DEBUG ***"
-                    totalWU = line.split(' ')[1].split('/')[1]
-                    currentWU = line.split(' ')[1].split('/')[0]
-                    jobize('Running...', get_percent(currentWU, totalWU), 10)
-                else :
-                    jobize('Finished', 100, 10)
-        except:
-            raise
+    # def start_processing(self):
+    #     try:
+    #         cmd = [pyrit_path, '-e', self.name, 'batch']
+    #         p = subprocess.Popen(cmd, stdout=subprocess.PIPE,
+    #                                   stderr=subprocess.PIPE,
+    #                                   universal_newlines=True)
+    #         while p.poll() is None:
+    #             line = p.stdout.readline()
+    #             if 'workunits' in line:
+    #                 self.isprocessing = True
+    #                 print "*** DEBUG ***"
+    #                 totalWU = line.split(' ')[1].split('/')[1]
+    #                 currentWU = line.split(' ')[1].split('/')[0]
+    #                 add_job('Running...', get_percent(currentWU, totalWU), 10)
+
+    #             else :
+    #                 self.isprocessing = False
+    #                 add_job('Finished', 100, 10)
+    #     except:
+    #         raise
 
 
 #CAPTURE FILE (containing the handshake) 
@@ -143,11 +147,11 @@ def divide_millions(number):
 
 
 #CREATE JOBS 
-def jobize(msg, percent, job_type):
+def add_job(msg, percent, job_type):
     try:
         # job_exists = jobs.query.filter_by(jobtype='').first()
         # if not job_exists:
-        j = jobs('', 'Test', msg, percent, job_type, 0)
+        j = jobs('Test', msg, percent, job_type, 0)
         s.add(j)
         s.commit()
         
@@ -169,9 +173,9 @@ def start_processing():
                 print "*** DEBUG ***"
     	    	totalWU = line.split(' ')[1].split('/')[1]
     	    	currentWU = line.split(' ')[1].split('/')[0]
-    	    	jobize('Running...', get_percent(currentWU, totalWU), 10)
+    	    	add_job('Running...', get_percent(currentWU, totalWU), 10)
             else :
-    	        jobize('Finished', 100, 10)
+    	        add_job('Finished', 100, 10)
     except:
     	raise
 
@@ -185,7 +189,7 @@ def create_essid(essid_name):
     while p.poll() is None:
         line = p.stdout.readline()
         if 'Created' in line:
-            jobize('ESSID ' + str(essid_name) + ' Created.', 100, 3)
+            add_job('ESSID ' + str(essid_name) + ' Created.', 100, 3)
             return True
 
 
@@ -201,14 +205,12 @@ def main():
 
 #ROUTE FOR CREATING A NEW ESSID
 @app.route('/create_essid', methods = ['POST'])
-def create_essid():
+def c_essid():
     if request.method == 'POST':
-        try:
-            essid_name = request.form['essid-name']
-            if create_essid(essid_name):
-                return redirect('/')
-        except:
-            raise
+        essid_name = request.form['essid-name']
+        if create_essid(essid_name):
+            return redirect('/')
+
 
 #ROUTE FOR ARCHIVING JOB
 @app.route('/archive_job/<job_id>', methods = ['GET'])
