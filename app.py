@@ -147,11 +147,11 @@ def divide_millions(number):
 
 
 #CREATE JOBS 
-def add_job(msg, percent, job_type):
+def add_job(jobname, msg, percent, job_type):
     try:
         # job_exists = jobs.query.filter_by(jobtype='').first()
         # if not job_exists:
-        j = jobs('Test', msg, percent, job_type, 0)
+        j = jobs(jobname, msg, percent, job_type, 0)
         s.add(j)
         s.commit()
         
@@ -173,9 +173,9 @@ def start_processing():
                 print "*** DEBUG ***"
     	    	totalWU = line.split(' ')[1].split('/')[1]
     	    	currentWU = line.split(' ')[1].split('/')[0]
-    	    	add_job('Running...', get_percent(currentWU, totalWU), 10)
+    	    	add_job('BATCH', 'Running...', get_percent(currentWU, totalWU), 10)
             else :
-    	        add_job('Finished', 100, 10)
+    	        add_job('BATCH', 'Finished', 100, 10)
     except:
     	raise
 
@@ -189,7 +189,7 @@ def create_essid(essid_name):
     while p.poll() is None:
         line = p.stdout.readline()
         if 'Created' in line:
-            add_job('ESSID ' + str(essid_name) + ' Created.', 100, 3)
+            add_job('ESSID', 'ESSID ' + str(essid_name) + ' Created successfully.', 100, 3)
             return True
 
 
@@ -223,6 +223,22 @@ def archive_job(job_id):
             raise
         return redirect('/')
 
+
+#ROUTE FOR UPLOADING CAP FILES
+@app.route('/upload_cap', methods=['POST'])
+def upload():
+    try:
+        uploaded_files = request.files.getlist("capfiles[]")
+        filenames = []
+        for file in uploaded_files:
+            if file:
+                file.save(os.path.join(app.config['CAPFILES_DEST'], file.filename))
+                filenames.append(file.filename)
+        # return render_template('upload.html', filenames=filenames)
+        add_job('FILES', str(len(filenames)) + ' file(s) uploaded sucessfully', 100, 5)
+        return redirect('/')
+    except:
+        raise
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True)

@@ -7,7 +7,7 @@
             <div class="col-lg-12">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                    Jobs
+                    <i class="fa fa-clock-o" aria-hidden="true"></i> Jobs
                     </div>
                         <table class="table table-condensed table-striped table-hover">
                             <tbody>
@@ -17,6 +17,8 @@
                                         <td class="icontd">
                                             {% if job.jobtype == 3 %}
                                                 <i class="fa fa-wifi" aria-hidden="true"></i>
+                                            {% elif job.jobtype == 5%}
+                                                <i class="fa fa-files-o" aria-hidden="true"></i>
                                             {% endif %}
                                         </td>
                                         <td>{{job.jobname}}</td>
@@ -47,7 +49,7 @@
             <div class="col-lg-6">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        ESSIDs
+                        <i class="fa fa-wifi" aria-hidden="true"></i> ESSIDs
                         <div class="btn-group pull-right">
                             <a data-toggle="modal" data-target="#addEssidModal" class="btn btn-default btn-xs">Add</a>
                         </div>
@@ -74,7 +76,7 @@
             <div class="col-lg-6">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        Available dictionaries
+                        <i class="fa fa-book" aria-hidden="true"></i> Available dictionaries
                         <div class="btn-group pull-right">
                             <a href="#" class="btn btn-default btn-xs">Import</a>
                             <a href="#" class="btn btn-danger btn-xs">Delete</a>
@@ -97,9 +99,10 @@
             <div class="col-lg-6">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        Cap files
+                        <i class="fa fa-files-o" aria-hidden="true"></i> Capture files
                         <div class="btn-group pull-right">
-                            <a href="#" class="btn btn-warning btn-xs">Import .cap</a>
+                            <a data-toggle="modal" data-target="#UploadCapModal"class="btn btn-default btn-xs">Import</a>
+                            <a href="#" class="btn btn-danger btn-xs">Delete</a>
                         </div>
                     </div>
                         <div class="panel-body">
@@ -118,4 +121,5 @@
 
 
 {% include "add_essid.html" ignore missing %}
+{% include "upload_cap.html" ignore missing %}
 {% endblock %}

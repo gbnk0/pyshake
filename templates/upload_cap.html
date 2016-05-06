@@ -1,0 +1,44 @@
+            <div class="modal fade" id="UploadCapModal" tabindex="-1" role="dialog" aria-labelledby="UploadCapModal">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="exampleModalLabel"><i class="fa fa-files-o" aria-hidden="true"></i> Upload .cap file</h4>
+                  </div>
+                  <div class="modal-body">
+
+                    <form id="uploadcapform" action="/upload_cap" method="POST" enctype="multipart/form-data">
+
+                      <label class="control-label">Select files</label>
+                      <input id="input-cap" name="capfiles[]" type="file" multiple class="file-loading">
+
+                      <div id="errorBlock" class="help-block"></div>
+                      <script>
+                      $(document).on('ready', function() {
+                          $("#input-43").fileinput({
+                              showPreview: false,
+                              elErrorContainer: "#errorBlock"
+                          });
+                      });
+                      </script>
+
+                    </form>
+
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                    <button id="savecap" type="button" class="btn btn-success">Save</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <script type="text/javascript">
+                $('#savecap').click(function(){
+
+                        $('#uploadcapform').submit();
+
+                });
+            </script>
+
+
+

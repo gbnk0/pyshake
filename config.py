@@ -16,7 +16,7 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + db_path + db_file
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
-app.config['UPLOADED_FILES_DEST'] = cap_path
+app.config['CAPFILES_DEST'] = cap_path
 
 db = SQLAlchemy(app)
 
