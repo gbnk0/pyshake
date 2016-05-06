@@ -19,6 +19,8 @@
                                                 <i class="fa fa-wifi" aria-hidden="true"></i>
                                             {% elif job.jobtype == 5%}
                                                 <i class="fa fa-files-o" aria-hidden="true"></i>
+                                            {% elif job.jobtype == 10 %}
+                                                <i class="fa fa-cog" aria-hidden="true"></i>
                                             {% endif %}
                                         </td>
                                         <td>{{job.jobname}}</td>
@@ -76,7 +78,6 @@
                                               <ul class="dropdown-menu">
                                                 <li><a href="#">Crack</a></li>
                                                 <li role="separator" class="divider"></li>
-                                                <li><a href="#">Delete</a></li>
                                               </ul>
                                             </div>
 
@@ -96,7 +97,6 @@
                         <i class="fa fa-book" aria-hidden="true"></i> Available dictionaries
                         <div class="btn-group pull-right">
                             <a href="#" class="btn btn-default btn-xs">Import</a>
-                            <a href="#" class="btn btn-danger btn-xs">Delete</a>
                         </div>
                     </div>
                     <div class="panel-body">
@@ -120,7 +120,6 @@
                         <i class="fa fa-files-o" aria-hidden="true"></i> Capture files
                         <div class="btn-group pull-right">
                             <a data-toggle="modal" data-target="#UploadCapModal"class="btn btn-default btn-xs">Import</a>
-                            <a href="#" class="btn btn-danger btn-xs">Delete</a>
                         </div>
                     </div>
                         <div class="panel-body">

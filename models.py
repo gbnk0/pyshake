@@ -3,8 +3,6 @@ from flask_sqlalchemy import SQLAlchemy
 from config import app, db
 
 
-
-
 class jobs(db.Model):
 
     jobid = db.Column(db.Integer, autoincrement = True, primary_key=True)
