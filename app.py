@@ -189,6 +189,7 @@ def create_essid(essid_name):
             return True
 
 
+
 #ROUTE FOR HOME
 @app.route("/")
 def main():
@@ -200,11 +201,19 @@ def main():
 
 #ROUTE FOR CREATING A NEW ESSID
 @app.route('/create_essid', methods = ['POST'])
-def signup():
+def create_essid():
     if request.method == 'POST':
         essid_name = request.form['essid-name']
         if create_essid(essid_name):
             return redirect('/')
+
+
+#ROUTE FOR ARCHIVING JOB
+# @app.route('/archive_job/<job_id>', methods = ['GET'])
+# def archive_job(job_id):
+#     if request.method == 'GET':
+#         if archive_job(job_id):
+#             return redirect('/')
 
 
 if __name__ == "__main__":
