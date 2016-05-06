@@ -128,9 +128,10 @@ def divide_millions(number):
 
 
 #CREATE JOBS 
-def jobize(jobname, msg, percent, job_type):
+def jobize(jobname, msg, percent, job_type, jobid):
     try:
-        job_exists = jobs.query.filter_by(jobtype=job_type).filter_by(jobarchived=0).first()
+        job_id = 0
+        job_exists = jobs.query.filter_by(jobid=jobid).filter_by(jobarchived=0).first()
         
         if job_type == 3:
             job_exists = False
@@ -138,12 +139,20 @@ def jobize(jobname, msg, percent, job_type):
         if not job_exists:
             j = jobs(jobname, msg, percent, job_type, 0)
             s.add(j)
+
+            #ONLY FOR RETREIVING THE JOB ID BEFORE COMMITING TO THE DB
+            s.flush()
+            s.refresh(j)
+            job_id = j.jobid
+
             s.commit()
+
         else:
-            s.query(jobs).filter(jobs.jobtype == job_type).update({'percent': percent})
+            s.query(jobs).filter(jobs.jobid == jobid).update({'jobstate': percent})
             s.commit()
-        
-        return 0
+
+        if jobid == 0:
+            return job_id
     except:
         raise
 
@@ -155,6 +164,9 @@ def process_essid(essid_name):
     	p = subprocess.Popen(cmd, stdout=subprocess.PIPE,
                                   stderr=subprocess.PIPE,
                                   universal_newlines=True)
+
+        job_id = jobize('BATCH', 'Processing ' + essid_name + '...', 0, 10, 0)
+
     	while p.poll() is None:
     	    line = p.stdout.readline()
     	    if 'workunits' and 'far' in line:
@@ -162,9 +174,9 @@ def process_essid(essid_name):
 
                 totalWU = line.split(' ')[1].split('/')[1]
                 currentWU = line.split(' ')[1].split('/')[0]
-
-    	    	jobize('BATCH', 'Processing ' + essid_name + '...', get_percent(currentWU, totalWU), 10)
-
+                jobize('BATCH', 'Processing ' + essid_name + '...', get_percent(currentWU, totalWU), 10, job_id)
+    	    	
+                print job_id
         try:
             p.terminate()
             p.communicate()
@@ -172,7 +184,7 @@ def process_essid(essid_name):
         except:
             pass
 
-        jobize('BATCH', 'Finished processing ' + essid_name, 100, 10)
+        jobize('BATCH', 'Finished processing ' + essid_name, 100, 10, job_id)
         return True
     except:
     	raise
@@ -187,7 +199,7 @@ def create_essid(essid_name):
     while p.poll() is None:
         line = p.stdout.readline()
         if 'Created' in line:
-            jobize('ESSID', 'ESSID ' + str(essid_name) + ' Created successfully.', 100, 3)
+            job_id = jobize('ESSID', 'ESSID ' + str(essid_name) + ' Created successfully.', 100, 3, 0)
             return True
 
 

@@ -15,10 +15,9 @@ class jobs(db.Model):
     jobarchived = db.Column(db.Integer)
 
     def __init__(self, jobname, jobmsg, jobstate, jobtype, jobarchived):
-        
+
         self.jobname = jobname
         self.jobmsg = jobmsg
         self.jobstate = jobstate
-        self.jobtype = jobtype
         self.jobtype = jobtype
         self.jobarchived = jobarchived
