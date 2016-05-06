@@ -54,22 +54,39 @@
                             <a data-toggle="modal" data-target="#addEssidModal" class="btn btn-default btn-xs">Add</a>
                         </div>
                     </div>
-                        <div class="panel-body">
-                            
-                            {% for essid, percent in essids.iteritems() %}
+                        <div class="panel-body" style="padding: 0px; padding-bottom: 0px;">
+                            <table class="table table-condensed table-striped table-hover" style="padding: 0px; padding-bottom: 0px; margin: 0px;">
+                                <tbody>
+                                {% for essid in essids %}
+                                    <tr class="active">
 
-                            <div class="notice notice-warning notice-sm">
+                                        <td class="icontd">
+                                            <i class="fa fa-wifi" aria-hidden="true"></i>
+                                        </td>
+                                        <td>{{ essid.name }}</td>
+                                        <td><span class="badge pull-right">{{ essid.percent }}%</span><td>
+                                        <td style="padding-left: 0px; margin-right: 0px;">
 
-                                <strong>{{ essid }}</strong>
-                                {% if percent|int == 100.00 %}
-                                    <a href="#" class="btn btn-success btn-xs pull-right">Crack</a>
-                                {% else %}
-                                    <span class="badge pull-right">{{ percent }}%</span>
-                                {% endif %}
-                            </div>
+                                            <div class="btn-group pull-right">
+                                              <a href="/process_essid/{{ essid.name }}" class="btn btn-info btn-xs" role="button">Process</a>
+                                              <button type="button" class="btn btn-primary dropdown-toggle btn-xs" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                <span class="caret"></span>
 
-                            {% endfor %}
+                                              </button>
+                                              <ul class="dropdown-menu">
+                                                <li><a href="#">Crack</a></li>
+                                                <li role="separator" class="divider"></li>
+                                                <li><a href="#">Delete</a></li>
+                                              </ul>
+                                            </div>
+
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
                         </div>
+                        <div class="panel-footer"></div>
                 </div>
             </div>
 
@@ -92,6 +109,7 @@
 
                         {% endfor %}
                     </div>
+                    <div class="panel-footer">2048 passwords available</div>
                 </div>
             </div>
 

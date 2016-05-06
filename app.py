@@ -5,7 +5,7 @@ import subprocess
 import glob
 import os
 from config import pyrit_path, cap_path
-
+from threading import Thread
 
 
 #DICTIONNARY FILE 
@@ -22,30 +22,10 @@ class essidobj():
     def __init__(self):
     	self.path = ''
     	self.name = ''
+        self.percent = 0.00
     	self.capath = ''
     	self.bssid = ''
         self.isprocessing = False
-
-    # def start_processing(self):
-    #     try:
-    #         cmd = [pyrit_path, '-e', self.name, 'batch']
-    #         p = subprocess.Popen(cmd, stdout=subprocess.PIPE,
-    #                                   stderr=subprocess.PIPE,
-    #                                   universal_newlines=True)
-    #         while p.poll() is None:
-    #             line = p.stdout.readline()
-    #             if 'workunits' in line:
-    #                 self.isprocessing = True
-    #                 print "*** DEBUG ***"
-    #                 totalWU = line.split(' ')[1].split('/')[1]
-    #                 currentWU = line.split(' ')[1].split('/')[0]
-    #                 add_job('Running...', get_percent(currentWU, totalWU), 10)
-
-    #             else :
-    #                 self.isprocessing = False
-    #                 add_job('Finished', 100, 10)
-    #     except:
-    #         raise
 
 
 #CAPTURE FILE (containing the handshake) 
@@ -88,13 +68,14 @@ def get_essids():
                               stderr=subprocess.PIPE,
                               universal_newlines=True)
     
-    results = {}
+    results = []
     while p.poll() is None:
         line = p.stdout.readline()
         if 'ESSID' in line:
-            essid = line.split("'")[1]
-            percent = line.split("(")[1]
-            results[essid] = percent.replace("%)\n","")
+            cur_essid = essidobj()
+            cur_essid.name = line.split("'")[1]
+            cur_essid.percent = line.split("(")[1].replace("%)\n","")
+            results.append(cur_essid)
     return results
 
 
@@ -147,40 +128,57 @@ def divide_millions(number):
 
 
 #CREATE JOBS 
-def add_job(jobname, msg, percent, job_type):
+def jobize(jobname, msg, percent, job_type):
     try:
-        # job_exists = jobs.query.filter_by(jobtype='').first()
-        # if not job_exists:
-        j = jobs(jobname, msg, percent, job_type, 0)
-        s.add(j)
-        s.commit()
+        job_exists = jobs.query.filter_by(jobtype=job_type).filter_by(jobarchived=0).first()
+        
+        if job_type == 3:
+            job_exists = False
+
+        if not job_exists:
+            j = jobs(jobname, msg, percent, job_type, 0)
+            s.add(j)
+            s.commit()
+        else:
+            s.query(jobs).filter(jobs.jobtype == job_type).update({'percent': percent})
+            s.commit()
         
         return 0
     except:
         raise
 
 
-#PROCESS ALL PASSWORDS IMPORTED WITH ALL ESSID CREATED
-def start_processing():
+#PROCESS ALL PASSWORDS WITH SELECTED ESSID
+def process_essid(essid_name):
     try:
-    	cmd = [pyrit_path, 'batch']
+    	cmd = [pyrit_path, '-e', essid_name, 'batch']
     	p = subprocess.Popen(cmd, stdout=subprocess.PIPE,
                                   stderr=subprocess.PIPE,
                                   universal_newlines=True)
     	while p.poll() is None:
     	    line = p.stdout.readline()
-    	    if 'workunits' in line:
+    	    if 'workunits' and 'far' in line:
                 print "*** DEBUG ***"
-    	    	totalWU = line.split(' ')[1].split('/')[1]
-    	    	currentWU = line.split(' ')[1].split('/')[0]
-    	    	add_job('BATCH', 'Running...', get_percent(currentWU, totalWU), 10)
-            else :
-    	        add_job('BATCH', 'Finished', 100, 10)
+
+                totalWU = line.split(' ')[1].split('/')[1]
+                currentWU = line.split(' ')[1].split('/')[0]
+
+    	    	jobize('BATCH', 'Processing ' + essid_name + '...', get_percent(currentWU, totalWU), 10)
+
+        try:
+            p.terminate()
+            p.communicate()
+
+        except:
+            pass
+
+        jobize('BATCH', 'Finished processing ' + essid_name, 100, 10)
+        return True
     except:
     	raise
 
 
-#CREATE ESSID FUNCTION
+#CREATE ESSID 
 def create_essid(essid_name):
     cmd = [pyrit_path, '-e', essid_name, 'create_essid']
     p = subprocess.Popen(cmd, stdout=subprocess.PIPE,
@@ -189,7 +187,7 @@ def create_essid(essid_name):
     while p.poll() is None:
         line = p.stdout.readline()
         if 'Created' in line:
-            add_job('ESSID', 'ESSID ' + str(essid_name) + ' Created successfully.', 100, 3)
+            jobize('ESSID', 'ESSID ' + str(essid_name) + ' Created successfully.', 100, 3)
             return True
 
 
@@ -210,6 +208,15 @@ def c_essid():
         essid_name = request.form['essid-name']
         if create_essid(essid_name):
             return redirect('/')
+
+
+#ROUTE FOR batch process ESSID
+@app.route('/process_essid/<essid_name>', methods = ['GET'])
+def pr_essid(essid_name):
+    if request.method == 'GET':
+        t = Thread(target=process_essid, args=(essid_name,))
+        t.start()
+        return redirect('/')
 
 
 #ROUTE FOR ARCHIVING JOB
@@ -235,7 +242,7 @@ def upload():
                 file.save(os.path.join(app.config['CAPFILES_DEST'], file.filename))
                 filenames.append(file.filename)
         # return render_template('upload.html', filenames=filenames)
-        add_job('FILES', str(len(filenames)) + ' file(s) uploaded sucessfully', 100, 5)
+        jobize('FILES', str(len(filenames)) + ' file(s) uploaded sucessfully', 100, 5)
         return redirect('/')
     except:
         raise
