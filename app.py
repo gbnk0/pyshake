@@ -1,9 +1,12 @@
-from config import app, db, s
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 from models import jobs
 from flask import Flask, render_template, request, redirect
 import subprocess
 import glob
 import os
+from config import app, db, s
 from config import pyrit_path, cap_path
 from threading import Thread
 
