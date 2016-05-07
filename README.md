@@ -9,6 +9,7 @@ Before trying it, you need:
 > -flask & flask-sqlalchemy <i class="icon-cog"></i> **pip install flask flask-sqlalchemy**
 
 > -pyrit <i class="icon-cog"></i> **apt-get install pyrit**
+
 Or:
 
 > Clone the repository and: <i class="icon-cog"></i> **pip install -r requirements.txt**
