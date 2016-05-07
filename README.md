@@ -6,9 +6,9 @@ Only tested on Debian 8 (Jessie).
 Before trying it, you need:
 > -pip: <i class="icon-cog"></i> **apt-get install python-pip**
 
-> -flask & flask-sqlalchemy <i class="icon-cog"></i> **pip install flask flask-sqlalchemy**
+> -flask & flask-sqlalchemy: <i class="icon-cog"></i> **pip install flask flask-sqlalchemy**
 
-> -pyrit <i class="icon-cog"></i> **apt-get install pyrit**
+> -pyrit: <i class="icon-cog"></i> **apt-get install pyrit**
 
 Or:
 
