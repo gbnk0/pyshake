@@ -2,7 +2,7 @@ PyShake - WebUI for pyrit wpa cracker
 ===================
 
 
-Only tested on Debian 8 (Jessie).
+Tested on Debian 7/8 .
 Before trying it, you need:
 > -pip: <i class="icon-cog"></i> **apt-get install python-pip**
 
