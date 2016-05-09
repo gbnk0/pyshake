@@ -63,6 +63,21 @@ class essidobj():
             raise
 
 
+    #CREATE ESSID 
+    def delete(self):
+        cmd = [pyrit_path, '-e', self.name, 'delete_essid']
+        p = subprocess.Popen(cmd, stdout=subprocess.PIPE,
+                                  stderr=subprocess.PIPE,
+                                  stdin=subprocess.PIPE,
+                                  universal_newlines=True)
+        p.stdin.write("y\n")
+        while p.poll() is None:
+            line = p.stdout.readline()
+            if 'Deleted' in line:
+                job_id = jobize('ESSID', 'ESSID ' + str(self.name) + ' Deleted successfully.', 100, 3, 0)
+                return True
+
+
 #CAPTURE FILE (containing the handshakes) 
 class capfileobj():
 
@@ -232,6 +247,16 @@ def pr_essid(essid_name):
         ce.name = essid_name
         t = Thread(target=ce.process)
         t.start()
+        return redirect('/')
+
+
+#ROUTE FOR batch process ESSID
+@app.route('/delete_essid/<essid_name>', methods = ['GET'])
+def del_essid(essid_name):
+    if request.method == 'GET':
+        ce = essidobj()
+        ce.name = essid_name
+        ce.delete()
         return redirect('/')
 
 
