@@ -6,6 +6,7 @@ from flask import Flask, render_template, request, redirect
 import subprocess
 import glob
 import os
+import config
 from config import app, db, s
 from config import pyrit_path, cap_path
 from threading import Thread
@@ -290,4 +291,5 @@ def upload():
         raise
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", debug=True)
+    app.debug = config.debug
+    app.run(host="0.0.0.0")

@@ -8,12 +8,15 @@ from flask_sqlalchemy import SQLAlchemy
 parser = SafeConfigParser()
 parser.read('pyshake.conf')
 
-db_path = parser.get('General', 'db_path')
-db_file = parser.get('General', 'db_file')
-pyrit_path = parser.get('General', 'pyrit_path')
-cap_path = parser.get('General', 'cap_path')
-
-
+try:
+    db_path = parser.get('General', 'db_path')
+    db_file = parser.get('General', 'db_file')
+    pyrit_path = parser.get('General', 'pyrit_path')
+    cap_path = parser.get('General', 'cap_path')
+    debug = parser.getboolean('General', 'debug')
+except:
+    raise
+    
 app = Flask(__name__)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + db_path + db_file
