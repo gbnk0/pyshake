@@ -181,7 +181,7 @@ def divide_millions(number):
 #CREATE JOBS 
 def jobize(jobname, msg, percent, job_type, jobid):
     try:
-        job_id = 0
+        job_id = jobid
         job_exists = jobs.query.filter_by(jobid=jobid).filter_by(jobarchived=0).first()
         
         if job_type == 3:
@@ -196,15 +196,15 @@ def jobize(jobname, msg, percent, job_type, jobid):
             s.refresh(j)
             job_id = j.jobid
 
-            s.commit()
-
         else:
             s.query(jobs).filter(jobs.jobid == jobid).update({'jobstate': percent})
-            s.commit()
 
         if jobid == 0:
             return job_id
+
+        s.commit()
     except:
+        s.flush()
         s.rollback()
         raise
 
@@ -220,7 +220,6 @@ def create_essid(essid_name):
         if 'Created' in line:
             job_id = jobize('ESSID', 'ESSID ' + str(essid_name) + ' Created successfully.', 100, 3, 0)
             return True
-
 
 
 #ROUTE FOR HOME
@@ -248,6 +247,7 @@ def pr_essid(essid_name):
         ce = essidobj()
         ce.name = essid_name
         t = Thread(target=ce.process)
+        t.daemon = True
         t.start()
         return redirect('/')
 
@@ -290,6 +290,7 @@ def upload():
     except:
         raise
 
+
 if __name__ == "__main__":
     app.debug = config.debug
-    app.run(host="0.0.0.0")
+    app.run(host="0.0.0.0", port=5000, threaded=True)
