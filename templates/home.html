@@ -70,7 +70,7 @@
                                         <td style="padding-left: 0px; margin-right: 0px;">
 
                                             <div class="btn-group pull-right">
-                                              <a href="/process_essid/{{ essid.name }}" class="btn btn-info btn-xs" role="button">Process</a>
+                                              <a href="/essid/{{ essid.name }}/process" class="btn btn-info btn-xs" role="button">Process</a>
                                               <button type="button" class="btn btn-primary dropdown-toggle btn-xs" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                 <span class="caret"></span>
 
@@ -78,7 +78,7 @@
                                               <ul class="dropdown-menu">
                                                 <li><a href="#">Start crack</a></li>
                                                 <li role="separator" class="divider"></li>
-                                                <li><a href="/delete_essid/{{ essid.name }}">Remove</a></li>
+                                                <li><a href="/essid/{{ essid.name }}/delete">Remove</a></li>
                                               </ul>
                                             </div>
 
@@ -98,6 +98,7 @@
                         <i class="fa fa-book" aria-hidden="true"></i> Available dictionaries
                         <div class="btn-group pull-right">
                             <a href="#" class="btn btn-default btn-xs">Import</a>
+                            <a href="#" class="btn btn-default btn-xs">Tools</a>
                         </div>
                     </div>
                     <div class="panel-body">

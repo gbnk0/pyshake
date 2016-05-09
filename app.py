@@ -204,6 +204,7 @@ def jobize(jobname, msg, percent, job_type, jobid):
         if jobid == 0:
             return job_id
     except:
+        s.rollback()
         raise
 
 
@@ -240,7 +241,7 @@ def c_essid():
 
 
 #ROUTE FOR batch process ESSID
-@app.route('/process_essid/<essid_name>', methods = ['GET'])
+@app.route('/essid/<essid_name>/process', methods = ['GET'])
 def pr_essid(essid_name):
     if request.method == 'GET':
         ce = essidobj()
@@ -251,7 +252,7 @@ def pr_essid(essid_name):
 
 
 #ROUTE FOR batch process ESSID
-@app.route('/delete_essid/<essid_name>', methods = ['GET'])
+@app.route('/essid/<essid_name>/delete', methods = ['GET'])
 def del_essid(essid_name):
     if request.method == 'GET':
         ce = essidobj()
