@@ -5,6 +5,7 @@ from ConfigParser import SafeConfigParser
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
+
 parser = SafeConfigParser()
 parser.read('pyshake.conf')
 
@@ -17,6 +18,7 @@ try:
 except:
     raise
     
+
 app = Flask(__name__)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + db_path + db_file
@@ -27,3 +29,9 @@ app.config['CAPFILES_DEST'] = cap_path
 db = SQLAlchemy(app)
 
 s = db.session
+
+
+# import logging
+
+# logging.basicConfig()
+# logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
