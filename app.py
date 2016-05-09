@@ -23,12 +23,44 @@ class dictobj():
 class essidobj():
 
     def __init__(self):
-    	self.path = ''
     	self.name = ''
         self.percent = 0.00
     	self.capath = ''
     	self.bssid = ''
         self.isprocessing = False
+
+
+    #PROCESS ALL PASSWORDS WITH CURRENT ESSID
+    def process(self):
+        try:
+            cmd = [pyrit_path, '-e', self.name, 'batch']
+            p = subprocess.Popen(cmd, stdout=subprocess.PIPE,
+                                      stderr=subprocess.PIPE,
+                                      universal_newlines=True)
+
+            job_id = jobize('BATCH', 'Processing ' + self.name + '...', 0, 10, 0)
+
+            while p.poll() is None:
+                line = p.stdout.readline()
+                if 'workunits' and 'far' in line:
+                    print "*** DEBUG ***"
+
+                    totalWU = line.split(' ')[1].split('/')[1]
+                    currentWU = line.split(' ')[1].split('/')[0]
+                    jobize('BATCH', 'Processing ' + self.name + '...', get_percent(currentWU, totalWU), 10, job_id)
+                    
+                    print job_id
+            try:
+                p.terminate()
+                p.communicate()
+
+            except:
+                pass
+
+            jobize('BATCH', 'Finished processing ' + self.name, 100, 10, job_id)
+            return True
+        except:
+            raise
 
 
 #CAPTURE FILE (containing the handshakes) 
@@ -160,39 +192,6 @@ def jobize(jobname, msg, percent, job_type, jobid):
         raise
 
 
-#PROCESS ALL PASSWORDS WITH SELECTED ESSID
-def process_essid(essid_name):
-    try:
-    	cmd = [pyrit_path, '-e', essid_name, 'batch']
-    	p = subprocess.Popen(cmd, stdout=subprocess.PIPE,
-                                  stderr=subprocess.PIPE,
-                                  universal_newlines=True)
-
-        job_id = jobize('BATCH', 'Processing ' + essid_name + '...', 0, 10, 0)
-
-    	while p.poll() is None:
-    	    line = p.stdout.readline()
-    	    if 'workunits' and 'far' in line:
-                print "*** DEBUG ***"
-
-                totalWU = line.split(' ')[1].split('/')[1]
-                currentWU = line.split(' ')[1].split('/')[0]
-                jobize('BATCH', 'Processing ' + essid_name + '...', get_percent(currentWU, totalWU), 10, job_id)
-    	    	
-                print job_id
-        try:
-            p.terminate()
-            p.communicate()
-
-        except:
-            pass
-
-        jobize('BATCH', 'Finished processing ' + essid_name, 100, 10, job_id)
-        return True
-    except:
-    	raise
-
-
 #CREATE ESSID 
 def create_essid(essid_name):
     cmd = [pyrit_path, '-e', essid_name, 'create_essid']
@@ -229,7 +228,9 @@ def c_essid():
 @app.route('/process_essid/<essid_name>', methods = ['GET'])
 def pr_essid(essid_name):
     if request.method == 'GET':
-        t = Thread(target=process_essid, args=(essid_name,))
+        ce = essidobj()
+        ce.name = essid_name
+        t = Thread(target=ce.process)
         t.start()
         return redirect('/')
 
