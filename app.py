@@ -31,13 +31,30 @@ class essidobj():
         self.isprocessing = False
 
 
-#CAPTURE FILE (containing the handshake) 
+#CAPTURE FILE (containing the handshakes) 
 class capfileobj():
 
     def __init__(self):
     	self.path = ''
     	self.name = ''
+    
+    #RETURN ALL HANDSHAKES CONAINED ON THE SPECIFIED CAPTURE FILE
+    def cap_get_essids(self):
+        cmd = [pyrit_path, '-r', self.path ,'analyze']
+        p = subprocess.Popen(cmd, stdout=subprocess.PIPE,
+                                  stderr=subprocess.PIPE,
+                                  universal_newlines=True)
+        
+        results = []
+        while p.poll() is None:
+            line = p.stdout.readline()
+            if 'AccessPoint' in line:
+                curessid = essidobj()
+                curessid.name = line.split("'")[1]
+                curessid.bssid = line.split(" ")[2]
+                results.append(curessid)
 
+        return results
 
 
 #DICTIONNARY IMPORTATION FUNCTION
@@ -81,23 +98,6 @@ def get_essids():
             results.append(cur_essid)
     return results
 
-
-#RETURN ALL HANDSHAKES CONAINED ON THE SPECIFIED CAPTURE FILE
-def get_handshakes(capfile):
-    cmd = [pyrit_path, '-r', capfile.path ,'analyze']
-    p = subprocess.Popen(cmd, stdout=subprocess.PIPE,
-                              stderr=subprocess.PIPE,
-                              universal_newlines=True)
-    
-    results = {}
-    while p.poll() is None:
-        line = p.stdout.readline()
-        if 'AccessPoint' in line:
-            essid = line.split("'")[1]
-            mac = line.split(" ")[2]
-            results[essid] = percent.replace("%)\n","")
-
-    return results
 
 
 #LIST ALL CAPTURE FILES IN THE CAP FOLDER
