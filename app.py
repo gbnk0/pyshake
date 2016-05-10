@@ -24,10 +24,10 @@ class dictobj():
 class essidobj():
 
     def __init__(self):
-    	self.name = ''
+        self.name = ''
         self.percent = 0.00
-    	self.capath = ''
-    	self.bssid = ''
+        self.capath = ''
+        self.bssid = ''
         self.isprocessing = False
 
 
@@ -52,10 +52,11 @@ class essidobj():
                     
                     print job_id
             try:
-                p.terminate()
+
                 p.communicate()
 
             except:
+                p.terminate()
                 pass
 
             jobize('BATCH', 'Finished processing ' + self.name, 100, 10, job_id)
@@ -106,7 +107,7 @@ class capfileobj():
 
 
 #DICTIONNARY IMPORTATION FUNCTION
-def import_dict(dictpath):
+def import_passwords(dictpath):
     cmd = [pyrit_path, '-i', dictpath, 'import_passwords']
     p = subprocess.Popen(cmd, stdout=subprocess.PIPE,
                               stderr=subprocess.PIPE,
@@ -129,7 +130,7 @@ def get_dics():
     return diclist
 
 
-#LIST ALL ESSID CREATED IN PYRIT BY EXECUTING "pyrit eval"
+#LIST ALL ESSID CREATED IN PYRIT BY EXECUTING "pyrit eval" (SLOW)
 def get_essids():
     cmd = [pyrit_path, 'eval']
     p = subprocess.Popen(cmd, stdout=subprocess.PIPE,
