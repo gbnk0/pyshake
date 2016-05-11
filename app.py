@@ -7,8 +7,7 @@ import subprocess
 import glob
 import os
 import config
-from config import app, db, s
-from config import pyrit_path, cap_path
+from config import *
 from threading import Thread
 
 
@@ -44,7 +43,7 @@ class essidobj():
             while p.poll() is None:
                 line = p.stdout.readline()
                 if 'workunits' and 'far' in line:
-                    print "*** DEBUG ***"
+                    # print "*** DEBUG ***"
 
                     totalWU = line.split(' ')[1].split('/')[1]
                     currentWU = line.split(' ')[1].split('/')[0]
