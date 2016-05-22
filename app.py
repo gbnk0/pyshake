@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import pyrit_cli
 from models import jobs
 from flask import Flask, render_template, request, redirect
 import subprocess
@@ -9,6 +10,12 @@ import os
 import config
 from config import *
 from threading import Thread
+
+#CREATE DATABASE
+def create_db():
+    if not os.path.isdir(db_path):
+        os.makedirs(db_path)
+    db.create_all()
 
 
 #DICTIONNARY FILE 
@@ -292,5 +299,6 @@ def upload():
 
 
 if __name__ == "__main__":
+    create_db()
     app.debug = config.debug
     app.run(host="0.0.0.0", port=5000, threaded=True)
