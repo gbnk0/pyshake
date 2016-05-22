@@ -232,7 +232,7 @@ def main():
 
 
 #ROUTE FOR CREATING A NEW ESSID
-@app.route('/create_essid', methods = ['POST'])
+@app.route('/essid/create', methods = ['POST'])
 def c_essid():
     if request.method == 'POST':
         essid_name = request.form['essid-name']
